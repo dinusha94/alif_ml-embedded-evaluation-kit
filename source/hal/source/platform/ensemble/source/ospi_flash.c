@@ -35,7 +35,7 @@
 #define FLASH_DEVICE_FAST_READ_WAIT_CYCLES (RTE_ISSI_FLASH_WAIT_CYCLES)
 
 extern ARM_DRIVER_FLASH ARM_Driver_Flash_(1);
-static ARM_DRIVER_FLASH* const ptrDrvFlash = &ARM_Driver_Flash_(1);
+ARM_DRIVER_FLASH* const ptrDrvFlash = &ARM_Driver_Flash_(1);
 
 extern ARM_DRIVER_GPIO ARM_Driver_GPIO_(OSPI_RESET_PORT);
 static ARM_DRIVER_GPIO* const GPIODrv = &ARM_Driver_GPIO_(OSPI_RESET_PORT);
@@ -94,22 +94,99 @@ static void ospi_flash_enable_xip()
 
 static int32_t ospi_flash_toggle_reset(void)
 {
-    int32_t ret = GPIODrv->Initialize(OSPI_RESET_PIN, NULL);
-    if (ret != ARM_DRIVER_OK) { return ret; }
+    int32_t ret;
+
+    /* I/O 0-7 */
+    ret = pinconf_set(PORT_9, PIN_5, PINMUX_ALTERNATE_FUNCTION_1,
+                     PADCTRL_OUTPUT_DRIVE_STRENGTH_12MA | PADCTRL_SLEW_RATE_FAST | PADCTRL_READ_ENABLE);
+    if (ret)
+        return -1;
+
+    ret = pinconf_set(PORT_9, PIN_6, PINMUX_ALTERNATE_FUNCTION_1,
+                     PADCTRL_OUTPUT_DRIVE_STRENGTH_12MA | PADCTRL_SLEW_RATE_FAST | PADCTRL_READ_ENABLE);
+    if (ret)
+        return -1;
+
+    ret = pinconf_set(PORT_9, PIN_7, PINMUX_ALTERNATE_FUNCTION_1,
+                     PADCTRL_OUTPUT_DRIVE_STRENGTH_12MA | PADCTRL_SLEW_RATE_FAST |  PADCTRL_READ_ENABLE);
+    if (ret)
+        return -1;
+
+    ret = pinconf_set(PORT_10, PIN_0, PINMUX_ALTERNATE_FUNCTION_1,
+                     PADCTRL_OUTPUT_DRIVE_STRENGTH_12MA | PADCTRL_SLEW_RATE_FAST | PADCTRL_READ_ENABLE);
+    if (ret)
+        return -1;
+
+    ret = pinconf_set(PORT_10, PIN_1, PINMUX_ALTERNATE_FUNCTION_1,
+                     PADCTRL_OUTPUT_DRIVE_STRENGTH_12MA | PADCTRL_SLEW_RATE_FAST | PADCTRL_READ_ENABLE);
+    if (ret)
+        return -1;
+
+    ret = pinconf_set(PORT_10, PIN_2, PINMUX_ALTERNATE_FUNCTION_1,
+                     PADCTRL_OUTPUT_DRIVE_STRENGTH_12MA | PADCTRL_SLEW_RATE_FAST | PADCTRL_READ_ENABLE);
+    if (ret)
+        return -1;
+
+    ret = pinconf_set(PORT_10, PIN_3, PINMUX_ALTERNATE_FUNCTION_1,
+                     PADCTRL_OUTPUT_DRIVE_STRENGTH_12MA | PADCTRL_SLEW_RATE_FAST | PADCTRL_READ_ENABLE);
+    if (ret)
+        return -1;
+
+    ret = pinconf_set(PORT_10, PIN_4, PINMUX_ALTERNATE_FUNCTION_1,
+                     PADCTRL_OUTPUT_DRIVE_STRENGTH_12MA | PADCTRL_SLEW_RATE_FAST |  PADCTRL_READ_ENABLE);
+    if (ret)
+        return -1;
+
+    /* RXDS */
+    ret = pinconf_set(PORT_10, PIN_7, PINMUX_ALTERNATE_FUNCTION_1,
+                     PADCTRL_OUTPUT_DRIVE_STRENGTH_12MA | PADCTRL_READ_ENABLE);
+    if (ret)
+        return -1;
+
+    /* SCLK */
+    ret = pinconf_set(PORT_5, PIN_5, PINMUX_ALTERNATE_FUNCTION_1,
+                     PADCTRL_OUTPUT_DRIVE_STRENGTH_12MA | PADCTRL_SLEW_RATE_FAST);
+    if (ret)
+        return -1;
+    /* SCLKN */
+    ret = pinconf_set(PORT_8, PIN_0, PINMUX_ALTERNATE_FUNCTION_1, PADCTRL_OUTPUT_DRIVE_STRENGTH_12MA);
+    if (ret)
+        return -1;
+
+    /* ?? this pin is not shown in the App kit board schematic,  when commented send operation did not work */
+    ret = pinconf_set(PORT_5, PIN_6, PINMUX_ALTERNATE_FUNCTION_1,
+                     PADCTRL_READ_ENABLE | PADCTRL_OUTPUT_DRIVE_STRENGTH_12MA);
+    if (ret)
+        return -1;
+    /* SSO */
+    ret = pinconf_set(PORT_5, PIN_7, PINMUX_ALTERNATE_FUNCTION_1,
+                     PADCTRL_OUTPUT_DRIVE_STRENGTH_12MA | PADCTRL_SLEW_RATE_FAST);
+    if (ret)
+        return -1;
+
+    /* toggle reset */
+
+    ret = GPIODrv->Initialize(OSPI_RESET_PIN, NULL);
+    if (ret != ARM_DRIVER_OK)
+        return -1;
 
     ret = GPIODrv->PowerControl(OSPI_RESET_PIN, ARM_POWER_FULL);
-    if (ret != ARM_DRIVER_OK) { return ret; }
+    if (ret != ARM_DRIVER_OK)
+        return -1;
 
     ret = GPIODrv->SetDirection(OSPI_RESET_PIN, GPIO_PIN_DIRECTION_OUTPUT);
-    if (ret != ARM_DRIVER_OK) { return ret; }
+    if (ret != ARM_DRIVER_OK)
+        return -1;
 
     ret = GPIODrv->SetValue(OSPI_RESET_PIN, GPIO_PIN_OUTPUT_STATE_LOW);
-    if (ret != ARM_DRIVER_OK) { return ret; }
+    if (ret != ARM_DRIVER_OK)
+        return -1;
 
     ret = GPIODrv->SetValue(OSPI_RESET_PIN, GPIO_PIN_OUTPUT_STATE_HIGH);
-    if (ret != ARM_DRIVER_OK) { return ret; }
+    if (ret != ARM_DRIVER_OK)
+        return -1;
 
-    return ret;
+    return 0;
 }
 
 

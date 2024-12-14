@@ -28,7 +28,7 @@
  */
 
 __STACK_SIZE = 0x00008000;
-__HEAP_SIZE  = 0x00010000;
+__HEAP_SIZE  = 0x00040000;
 __ROM_BASE = 0x80008000;
 __ROM_SIZE = 0x00477000;
 __OSPI_FLASH_BASE = 0xC0000000;
@@ -148,14 +148,16 @@ SECTIONS
 
   .bss.sram0 (NOLOAD) : ALIGN(8)
   {
-    * (.bss.camera_frame_buf)              /* Camera Frame Buffer */
-    * (.bss.camera_frame_bayer_to_rgb_buf) /* (Optional) Camera Frame Buffer for Bayer to RGB Convertion.*/
-    * (.bss.lcd_image_buf)
+    * (.bss.NoInit.activation_buf_sram) /* 4MB */
   } > SRAM0
 
   .bss.sram1 (NOLOAD) : ALIGN(8)
   {
-    * (.bss.NoInit.activation_buf_sram) /* 2MB */
+    
+    * (.bss.camera_frame_buf)              /* Camera Frame Buffer */
+    * (.bss.camera_frame_bayer_to_rgb_buf) /* (Optional) Camera Frame Buffer for Bayer to RGB Convertion.*/
+    * (.bss.lcd_image_buf)
+    * (.bss.black_image)
   } > SRAM1
 
   .bss.itcm (NOLOAD) : ALIGN(8)

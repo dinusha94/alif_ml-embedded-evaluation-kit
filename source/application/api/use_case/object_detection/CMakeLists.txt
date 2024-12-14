@@ -28,7 +28,15 @@ project(${OBJECT_DETECTION_API_TARGET}
 add_library(${OBJECT_DETECTION_API_TARGET} STATIC
         src/DetectorPreProcessing.cc
         src/DetectorPostProcessing.cc
-        src/YoloFastestModel.cc)
+        src/YoloFastestModel.cc
+        src/MobileNetModel.cc
+        src/ImgClassProcessing.cc
+        src/Wav2LetterModel.cc
+        src/AsrClassifier.cc
+        src/Wav2LetterPostprocess.cc
+        src/Wav2LetterPreprocess.cc
+        src/Wav2LetterMfcc.cc
+        src/OutputDecode.cc)
 
 target_include_directories(${OBJECT_DETECTION_API_TARGET} PUBLIC include)
 
